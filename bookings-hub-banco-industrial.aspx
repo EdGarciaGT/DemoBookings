@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microsoft Bookings — Hub de Conocimiento · Banco Industrial</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,300&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─── VARIABLES ─────────────────────────────────────────────── */
+:root{
+  --ink:       #0d1f3c;
+  --ink2:      #2c3e5a;
+  --muted:     #6b7a96;
+  --light:     #f4f6fb;
+  --white:     #ffffff;
+  --border:    #e4e9f2;
+  --ms:        #0078d4;
+  --ms-dark:   #005fa3;
+  --ms-light:  #e8f3fc;
+  --amber:     #e07b1a;
+  --amber-l:   #fff4e6;
+  --green:     #0d7a55;
+  --green-l:   #e8f8f2;
+  --red:       #c0392b;
+  --teal:      #0a7ea4;
+  --teal-l:    #e0f4fb;
+  --sidebar-w: 260px;
+  --content-max:820px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background:var(--white);color:var(--ink);
+  display:flex;min-height:100vh;
+}
+
+/* ─── SIDEBAR ────────────────────────────────────────────────── */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  position:fixed;top:0;left:0;bottom:0;
+  background:var(--ink);
+  display:flex;flex-direction:column;
+  z-index:50;overflow-y:auto;
+}
+.sb-brand{
+  padding:1.6rem 1.4rem 1.2rem;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.sb-logo{
+  display:flex;align-items:center;gap:.7rem;margin-bottom:.9rem;
+}
+.sb-logo-mark{
+  width:36px;height:36px;background:var(--ms);border-radius:8px;
+  display:grid;place-items:center;
+  font-family:'Fraunces',serif;font-weight:800;color:#fff;font-size:.85rem;
+  flex-shrink:0;
+}
+.sb-logo-text{
+  font-family:'Fraunces',serif;font-weight:700;font-size:.9rem;
+  color:#fff;line-height:1.2;
+}
+.sb-logo-text span{display:block;font-size:.65rem;font-weight:400;color:rgba(255,255,255,.5);font-family:'Plus Jakarta Sans',sans-serif;}
+.sb-badge{
+  display:inline-flex;align-items:center;gap:.4rem;
+  background:rgba(0,120,212,.25);border:1px solid rgba(0,120,212,.4);
+  color:#7ec8f5;font-size:.62rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  padding:.2rem .6rem;border-radius:99px;
+}
+.sb-badge::before{content:'';width:6px;height:6px;background:#7ec8f5;border-radius:50%;}
+
+.sb-nav{flex:1;padding:.8rem 0;}
+.sb-section{margin-bottom:.25rem;}
+.sb-section-label{
+  font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.3);padding:.6rem 1.4rem .3rem;
+}
+.sb-link{
+  display:flex;align-items:center;gap:.65rem;
+  padding:.55rem 1.4rem;font-size:.8rem;font-weight:500;
+  color:rgba(255,255,255,.55);cursor:pointer;transition:.18s;
+  border-left:3px solid transparent;text-decoration:none;
+  background:none;border-top:none;border-right:none;border-bottom:none;
+  width:100%;text-align:left;
+}
+.sb-link:hover{color:#fff;background:rgba(255,255,255,.06);}
+.sb-link.active{
+  color:#fff;background:rgba(0,120,212,.15);
+  border-left-color:var(--ms);
+}
+.sb-link .sb-icon{font-size:.95rem;flex-shrink:0;}
+.sb-link .sb-num{
+  margin-left:auto;font-size:.6rem;font-weight:700;
+  background:rgba(255,255,255,.1);padding:.1rem .4rem;border-radius:99px;
+  color:rgba(255,255,255,.4);
+}
+.sb-demo .sb-link.active .sb-num{background:rgba(0,120,212,.3);color:#7ec8f5;}
+
+.sb-footer{
+  padding:1rem 1.4rem;border-top:1px solid rgba(255,255,255,.08);
+  font-size:.7rem;color:rgba(255,255,255,.3);line-height:1.5;
+}
+.sb-footer strong{color:rgba(255,255,255,.5);}
+
+/* ─── MAIN ───────────────────────────────────────────────────── */
+.main{
+  margin-left:var(--sidebar-w);
+  flex:1;min-width:0;
+}
+
+/* ─── TOPBAR (mobile / progress) ────────────────────────────── */
+.topbar{
+  position:sticky;top:0;z-index:40;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:.6rem 2.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.tb-crumb{font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:.4rem;}
+.tb-crumb strong{color:var(--ink2);}
+.tb-progress{display:flex;align-items:center;gap:.5rem;font-size:.72rem;color:var(--muted);}
+.progress-bar{width:100px;height:4px;background:var(--border);border-radius:99px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--ms);border-radius:99px;transition:.3s;width:0%;}
+
+/* ─── CONTENT SECTIONS ───────────────────────────────────────── */
+.hub-section{
+  max-width:calc(var(--content-max) + 6rem);
+  margin:0 auto;
+  padding:5rem 3rem 4rem;
+  border-bottom:1px solid var(--border);
+}
+.hub-section:last-child{border-bottom:none;}
+
+/* Hero */
+.hero-section{
+  background:linear-gradient(160deg,var(--ink) 0%,#1a3a6c 100%);
+  color:#fff;max-width:100%;padding:0;border-bottom:none;
+  position:relative;overflow:hidden;
+}
+.hero-section::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 80% at 110% 30%,rgba(0,120,212,.35) 0%,transparent 60%);
+}
+.hero-section::after{
+  content:'';position:absolute;
+  right:-80px;top:-80px;
+  width:400px;height:400px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.04);
+  box-shadow:0 0 0 60px rgba(255,255,255,.02),0 0 0 120px rgba(255,255,255,.015);
+}
+.hero-inner{
+  max-width:calc(var(--content-max) + 6rem);
+  margin:0 auto;padding:5rem 3rem 4.5rem;
+  position:relative;z-index:1;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.75);font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  padding:.3rem .9rem;border-radius:99px;margin-bottom:1.5rem;
+}
+.hero-inner h1{
+  font-family:'Fraunces',serif;font-size:clamp(2.4rem,5vw,3.6rem);
+  font-weight:800;line-height:1.0;margin-bottom:.9rem;
+  background:linear-gradient(135deg,#fff 30%,rgba(126,200,245,.7));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-inner h1 em{font-style:italic;font-weight:300;}
+.hero-sub{
+  font-size:1.05rem;color:rgba(255,255,255,.65);line-height:1.75;
+  max-width:580px;margin-bottom:2.5rem;
+}
+.hero-chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2.5rem;}
+.chip{
+  display:inline-flex;align-items:center;gap:.4rem;
+  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.8);font-size:.75rem;font-weight:500;
+  padding:.35rem .85rem;border-radius:8px;
+}
+.hero-metrics{
+  display:flex;gap:2.5rem;flex-wrap:wrap;
+  padding-top:2rem;border-top:1px solid rgba(255,255,255,.1);
+}
+.metric-item .m-num{
+  font-family:'Fraunces',serif;font-size:2rem;font-weight:800;color:#fff;
+  line-height:1;
+}
+.metric-item .m-label{font-size:.75rem;color:rgba(255,255,255,.5);margin-top:.2rem;}
+
+/* Section headers */
+.sec-label{
+  font-size:.65rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ms);margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem;
+}
+.sec-label::before{content:'';width:20px;height:2px;background:var(--ms);border-radius:1px;}
+.sec-title{
+  font-family:'Fraunces',serif;font-size:clamp(1.6rem,3.5vw,2.3rem);
+  font-weight:700;line-height:1.1;color:var(--ink);margin-bottom:.9rem;
+}
+.sec-title em{font-style:italic;font-weight:300;color:var(--muted);}
+.sec-body{
+  font-size:.95rem;color:var(--ink2);line-height:1.8;
+  max-width:620px;margin-bottom:2rem;
+}
+
+/* ─── FEATURE CARDS ──────────────────────────────────────────── */
+.feat-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem;
+  margin-top:1.5rem;
+}
+.feat-card{
+  border:1.5px solid var(--border);border-radius:12px;padding:1.3rem;
+  transition:.2s;cursor:default;
+}
+.feat-card:hover{border-color:rgba(0,120,212,.3);box-shadow:0 4px 20px rgba(0,120,212,.08);}
+.feat-card .fc-icon{
+  width:38px;height:38px;border-radius:10px;
+  display:grid;place-items:center;font-size:1.1rem;
+  margin-bottom:.85rem;
+}
+.feat-card .fc-title{font-weight:700;font-size:.88rem;color:var(--ink);margin-bottom:.35rem;}
+.feat-card .fc-body{font-size:.78rem;color:var(--muted);line-height:1.6;}
+
+/* ─── STEPS ─────────────────────────────────────────────────── */
+.steps-row{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:0;margin-top:2rem;
+  border:1.5px solid var(--border);border-radius:14px;overflow:hidden;
+}
+.step-card{
+  padding:1.4rem 1.3rem;position:relative;
+  border-right:1.5px solid var(--border);
+}
+.step-card:last-child{border-right:none;}
+.step-num{
+  font-family:'Fraunces',serif;font-size:2.8rem;font-weight:800;
+  color:var(--border);line-height:1;margin-bottom:.5rem;
+}
+.step-title{font-weight:700;font-size:.88rem;color:var(--ink);margin-bottom:.35rem;}
+.step-body{font-size:.76rem;color:var(--muted);line-height:1.55;}
+.step-card.highlighted{background:var(--ms);border-color:var(--ms);}
+.step-card.highlighted .step-num{color:rgba(255,255,255,.2);}
+.step-card.highlighted .step-title{color:#fff;}
+.step-card.highlighted .step-body{color:rgba(255,255,255,.7);}
+
+/* ─── USE CASE CARDS ─────────────────────────────────────────── */
+.cases-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:1rem;margin-top:1.5rem;
+}
+.case-card{
+  border:1.5px solid var(--border);border-radius:14px;overflow:hidden;
+  cursor:pointer;transition:.22s;
+}
+.case-card:hover{box-shadow:0 8px 30px rgba(0,0,0,.1);transform:translateY(-3px);}
+.case-card-head{padding:1.3rem 1.3rem 1rem;}
+.case-card-body{padding:0 1.3rem 1.3rem;}
+.case-num{
+  font-family:'Fraunces',serif;font-size:.7rem;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:.5rem;
+}
+.case-icon{font-size:1.6rem;margin-bottom:.6rem;}
+.case-title{font-weight:700;font-size:1rem;color:var(--ink);margin-bottom:.35rem;}
+.case-desc{font-size:.78rem;color:var(--muted);line-height:1.6;}
+.case-tag{
+  display:inline-flex;align-items:center;gap:.3rem;
+  font-size:.65rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:.2rem .6rem;border-radius:6px;margin-top:.75rem;
+}
+.case-footer{
+  border-top:1px solid var(--border);padding:.75rem 1.3rem;
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:.75rem;color:var(--muted);
+}
+.case-footer .arrow{color:var(--ms);font-weight:700;}
+
+/* colors per case */
+.c-blue .case-card-head{background:var(--ms-light);}
+.c-blue .case-num{color:var(--ms);}
+.c-blue .case-tag{background:var(--ms-light);color:var(--ms);}
+.c-teal .case-card-head{background:var(--teal-l);}
+.c-teal .case-num{color:var(--teal);}
+.c-teal .case-tag{background:var(--teal-l);color:var(--teal);}
+.c-green .case-card-head{background:var(--green-l);}
+.c-green .case-num{color:var(--green);}
+.c-green .case-tag{background:var(--green-l);color:var(--green);}
+.c-amber .case-card-head{background:var(--amber-l);}
+.c-amber .case-num{color:var(--amber);}
+.c-amber .case-tag{background:var(--amber-l);color:var(--amber);}
+
+/* ─── DEMO CONTAINER ─────────────────────────────────────────── */
+.demo-wrap{
+  border:1.5px solid var(--border);border-radius:16px;overflow:hidden;
+  box-shadow:0 4px 30px rgba(0,0,0,.06);margin-top:1.5rem;
+}
+.demo-topbar{
+  background:var(--light);border-bottom:1px solid var(--border);
+  padding:.55rem 1rem;
+  display:flex;align-items:center;gap:.75rem;
+}
+.demo-dots{display:flex;gap:.35rem;}
+.demo-dots span{width:10px;height:10px;border-radius:50%;}
+.demo-dots span:nth-child(1){background:#ef4444;}
+.demo-dots span:nth-child(2){background:#f59e0b;}
+.demo-dots span:nth-child(3){background:#22c55e;}
+.demo-url{
+  flex:1;background:#fff;border:1px solid var(--border);border-radius:6px;
+  padding:.28rem .75rem;font-size:.7rem;color:var(--muted);font-family:monospace;
+  display:flex;align-items:center;gap:.35rem;
+}
+.demo-url::before{content:'🔒';font-size:.65rem;}
+
+/* shared bookings sim styles */
+.bk-sim{background:#fff;}
+.bk-header{
+  padding:1rem 1.5rem;color:#fff;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;
+}
+.bk-header.blue{background:#0078d4;}
+.bk-header.navy{background:#0f4c81;}
+.bk-header.green{background:#065f46;}
+.bk-header.amber{background:#92400e;}
+.bk-org-name{font-weight:700;font-size:.92rem;}
+.bk-org-sub{font-size:.72rem;opacity:.75;}
+.bk-body{padding:1.2rem 1.5rem;}
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:.7rem;margin-bottom:1rem;}
+.svc-c{
+  border:1.5px solid #e5e7eb;border-radius:9px;padding:.9rem;
+  cursor:pointer;transition:.15s;
+}
+.svc-c:hover,.svc-c.sel{border-color:#0078d4;background:#f0f7ff;}
+.svc-c.sel::after{/* checkmark via title */}
+.svc-c .si{font-size:1.2rem;margin-bottom:.35rem;}
+.svc-c .sn{font-weight:700;font-size:.82rem;color:#111;}
+.svc-c .sm{font-size:.7rem;color:#6b7280;margin-top:.2rem;}
+
+/* calendar mini */
+.cal-mini{border:1px solid #e5e7eb;border-radius:9px;overflow:hidden;max-width:340px;}
+.cal-mini-head{
+  background:#0078d4;color:#fff;padding:.5rem .9rem;
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:.8rem;font-weight:600;
+}
+.cal-mini-nav{background:none;border:none;color:#fff;cursor:pointer;font-size:.9rem;}
+.cal-g{display:grid;grid-template-columns:repeat(7,1fr);}
+.cal-dl{background:#f9fafb;text-align:center;font-size:.6rem;font-weight:700;color:#9ca3af;padding:.35rem 0;text-transform:uppercase;}
+.cal-d{
+  text-align:center;padding:.35rem;font-size:.72rem;cursor:pointer;
+  min-height:28px;display:grid;place-items:center;background:#fff;
+  transition:.12s;
+}
+.cal-d:hover:not(.dis):not(.emp){background:#e0f0ff;}
+.cal-d.dis{color:#d1d5db;cursor:default;}
+.cal-d.emp{background:#f9fafb;cursor:default;}
+.cal-d.av{color:#0078d4;font-weight:600;}
+.cal-d.sel-d{background:#0078d4!important;color:#fff!important;font-weight:700;border-radius:3px;}
+
+/* time slots */
+.slots-row{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.8rem;}
+.slot{
+  padding:.25rem .65rem;border:1px solid #e5e7eb;border-radius:5px;
+  font-size:.72rem;font-weight:500;cursor:pointer;transition:.12s;color:#374151;
+}
+.slot:hover:not(.taken){border-color:#0078d4;color:#0078d4;background:#f0f7ff;}
+.slot.sel{background:#0078d4;color:#fff;border-color:#0078d4;}
+.slot.taken{background:#f3f4f6;color:#9ca3af;cursor:default;}
+
+/* form */
+.bk-form{padding:1rem 1.5rem 1.3rem;}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:.7rem;}
+@media(max-width:500px){.f-row{grid-template-columns:1fr;}}
+.f-group{display:flex;flex-direction:column;gap:.25rem;}
+.f-label{font-size:.67rem;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.05em;}
+.f-input{
+  border:1px solid #e5e7eb;border-radius:6px;padding:.5rem .75rem;
+  font-size:.82rem;color:#111;font-family:'Plus Jakarta Sans',sans-serif;
+  outline:none;transition:.15s;background:#fff;
+}
+.f-input:focus{border-color:#0078d4;box-shadow:0 0 0 3px rgba(0,120,212,.1);}
+.bk-cta{
+  width:100%;padding:.72rem;background:#0078d4;color:#fff;border:none;
+  border-radius:7px;font-size:.87rem;font-weight:700;cursor:pointer;transition:.2s;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+.bk-cta:hover{background:#006bbf;}
+.bk-cta:disabled{background:#9ca3af;cursor:not-allowed;}
+
+/* step wizard */
+.wiz{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:1rem;}
+.wiz-s{
+  flex:1;padding:.5rem;text-align:center;font-size:.68rem;font-weight:600;
+  background:var(--light);color:var(--muted);border-right:1px solid var(--border);
+  transition:.2s;
+}
+.wiz-s:last-child{border-right:none;}
+.wiz-s.done{background:#e8f8f2;color:#065f46;}
+.wiz-s.active{background:#e8f3fc;color:var(--ms);}
+
+/* staff list */
+.staff-list{padding:.4rem;}
+.staff-item{
+  display:flex;align-items:center;gap:.65rem;padding:.55rem .5rem;
+  border-radius:6px;cursor:pointer;transition:.14s;
+}
+.staff-item:hover,.staff-item.sel{background:#e8f3fc;}
+.staff-av{
+  width:34px;height:34px;border-radius:50%;
+  display:grid;place-items:center;color:#fff;font-weight:700;font-size:.68rem;flex-shrink:0;
+}
+.staff-name{font-size:.8rem;font-weight:600;color:#111;}
+.staff-role{font-size:.68rem;color:#6b7280;}
+.staff-dot{width:7px;height:7px;border-radius:50%;margin-left:auto;flex-shrink:0;}
+.dot-on{background:#22c55e;}
+.dot-busy{background:#f59e0b;}
+
+/* timeline for onboarding */
+.timeline{position:relative;padding-left:1.8rem;}
+.timeline::before{content:'';position:absolute;left:.65rem;top:.5rem;bottom:.5rem;width:2px;background:#e5e7eb;}
+.tl-item{
+  position:relative;margin-bottom:.8rem;
+  padding:.8rem 1rem;border:1.5px solid #e5e7eb;border-radius:8px;
+  cursor:pointer;transition:.15s;
+}
+.tl-item:hover:not(.booked){border-color:#059669;background:#f0fdf4;}
+.tl-item.booked{background:#f0fdf4;border-color:#10b981;}
+.tl-item::before{
+  content:'';position:absolute;left:-1.45rem;top:50%;transform:translateY(-50%);
+  width:11px;height:11px;border-radius:50%;background:#e5e7eb;
+  border:2px solid #fff;box-shadow:0 0 0 2px #e5e7eb;transition:.15s;
+}
+.tl-item.booked::before{background:#10b981;box-shadow:0 0 0 2px #10b981;}
+.tl-title-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.4rem;}
+.tl-title{font-weight:700;font-size:.82rem;color:#111;}
+.tl-meta{font-size:.7rem;color:#6b7280;display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.2rem;}
+.tl-badge{font-size:.67rem;font-weight:700;}
+.tl-badge.booked{color:#065f46;}
+.tl-badge.pending{color:#9ca3af;}
+
+/* category grid IT */
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:.9rem;}
+@media(max-width:440px){.cat-grid{grid-template-columns:1fr 1fr;}}
+.cat-c{border:1.5px solid #e5e7eb;border-radius:8px;padding:.7rem .5rem;text-align:center;cursor:pointer;transition:.14s;}
+.cat-c:hover,.cat-c.sel{border-color:#0078d4;background:#f0f7ff;}
+.cat-icon{font-size:1.2rem;margin-bottom:.25rem;}
+.cat-name{font-size:.67rem;font-weight:600;color:#374151;}
+.pri-row{display:flex;gap:.4rem;margin-bottom:.9rem;}
+.pri-b{flex:1;padding:.4rem;border:1px solid #e5e7eb;border-radius:6px;font-size:.7rem;font-weight:600;cursor:pointer;text-align:center;transition:.14s;background:#fff;}
+.pri-b.p-lo.sel{background:#d1fae5;border-color:#10b981;color:#065f46;}
+.pri-b.p-me.sel{background:#fef3c7;border-color:#f59e0b;color:#92400e;}
+.pri-b.p-hi.sel{background:#fee2e2;border-color:#ef4444;color:#991b1b;}
+
+/* ─── COMPARISON TABLE ───────────────────────────────────────── */
+.comp-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:1.5rem;}
+.comp-table th{
+  background:var(--ms);color:#fff;
+  font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.72rem;
+  letter-spacing:.05em;text-transform:uppercase;
+  padding:.75rem 1rem;text-align:left;
+}
+.comp-table th:first-child{border-radius:8px 0 0 0;}
+.comp-table th:last-child{border-radius:0 8px 0 0;}
+.comp-table td{padding:.65rem 1rem;border-bottom:1px solid var(--border);color:var(--ink2);}
+.comp-table tr:last-child td{border-bottom:none;}
+.comp-table td:first-child{color:var(--ink);font-weight:500;}
+.comp-table tr:nth-child(even) td{background:var(--light);}
+.ck{color:#059669;font-weight:700;}
+.cx{color:#dc2626;}
+.cy{color:#d97706;}
+
+/* ─── CALLOUT BOXES ──────────────────────────────────────────── */
+.callout{
+  border-radius:10px;padding:1rem 1.2rem;margin:1.5rem 0;
+  display:flex;gap:.8rem;align-items:flex-start;
+  font-size:.82rem;line-height:1.7;
+}
+.callout-icon{font-size:1.1rem;flex-shrink:0;margin-top:.1rem;}
+.callout.info{background:var(--ms-light);border-left:3px solid var(--ms);color:#1e3a5f;}
+.callout.tip{background:var(--amber-l);border-left:3px solid var(--amber);color:#7c3d0a;}
+.callout.success{background:var(--green-l);border-left:3px solid var(--green);color:#064e35;}
+
+/* ─── METRICS ROW ────────────────────────────────────────────── */
+.metrics-row{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:1rem;margin-top:1.5rem;
+}
+.metric-card{
+  background:var(--light);border-radius:12px;padding:1.2rem;text-align:center;
+}
+.mc-num{
+  font-family:'Fraunces',serif;font-size:2.2rem;font-weight:800;
+  color:var(--ink);line-height:1;
+}
+.mc-label{font-size:.75rem;color:var(--muted);margin-top:.3rem;line-height:1.4;}
+
+/* ─── CONFIRM OVERLAY ────────────────────────────────────────── */
+.overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);
+  z-index:200;align-items:center;justify-content:center;padding:1rem;
+}
+.overlay.show{display:flex;}
+.overlay-card{
+  background:#fff;border-radius:16px;padding:2.2rem;max-width:380px;width:100%;
+  text-align:center;animation:popUp .3s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes popUp{from{transform:scale(.8);opacity:0;}to{transform:scale(1);opacity:1;}}
+.ov-icon{font-size:2.8rem;margin-bottom:.9rem;}
+.ov-title{font-family:'Fraunces',serif;font-weight:700;font-size:1.2rem;color:var(--ink);margin-bottom:.4rem;}
+.ov-body{font-size:.82rem;color:var(--muted);line-height:1.65;margin-bottom:1.2rem;}
+.ov-detail{
+  background:var(--ms-light);border-radius:8px;padding:.85rem;
+  text-align:left;font-size:.76rem;color:#1e40af;line-height:1.9;
+  margin-bottom:1.2rem;white-space:pre-line;
+}
+.ov-btn{
+  background:var(--ms);color:#fff;border:none;padding:.65rem 1.8rem;
+  border-radius:8px;font-weight:700;cursor:pointer;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:.85rem;
+}
+
+/* onboard overlay slots */
+.slot-pick{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.2rem;}
+.sp-slot{
+  border:1.5px solid var(--border);border-radius:7px;padding:.55rem;
+  text-align:center;cursor:pointer;transition:.14s;font-size:.75rem;
+}
+.sp-slot:hover{border-color:var(--ms);background:var(--ms-light);}
+
+/* ─── SCROLL REVEAL ──────────────────────────────────────────── */
+.reveal{opacity:0;transform:translateY(22px);transition:.55s ease;}
+.reveal.vis{opacity:1;transform:none;}
+.reveal-d1{transition-delay:.08s;}
+.reveal-d2{transition-delay:.16s;}
+.reveal-d3{transition-delay:.24s;}
+.reveal-d4{transition-delay:.32s;}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────── */
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .main{margin-left:0;}
+  .hub-section,.hero-inner{padding-left:1.5rem;padding-right:1.5rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════ SIDEBAR ════════════════════════ -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">
+      <div class="sb-logo-mark">BI</div>
+      <div class="sb-logo-text">
+        Microsoft Bookings
+        <span>Hub de Conocimiento</span>
+      </div>
+    </div>
+    <div class="sb-badge">Banco Industrial · TxD</div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="sb-section">
+      <div class="sb-section-label">Introducción</div>
+      <button class="sb-link active" onclick="scrollTo('#portada',this)"><span class="sb-icon">🏠</span> Portada</button>
+      <button class="sb-link" onclick="scrollTo('#que-es',this)"><span class="sb-icon">📖</span> ¿Qué es Bookings?</button>
+      <button class="sb-link" onclick="scrollTo('#como-funciona',this)"><span class="sb-icon">⚙️</span> ¿Cómo funciona?</button>
+    </div>
+    <div class="sb-section sb-demo">
+      <div class="sb-section-label">Casos de Uso</div>
+      <button class="sb-link" onclick="scrollTo('#casos',this)"><span class="sb-icon">🗂️</span> Resumen de casos<span class="sb-num">4</span></button>
+      <button class="sb-link" onclick="scrollTo('#demo1',this)"><span class="sb-icon">📅</span> Reuniones internas<span class="sb-num">01</span></button>
+      <button class="sb-link" onclick="scrollTo('#demo2',this)"><span class="sb-icon">🏦</span> Atención al cliente<span class="sb-num">02</span></button>
+      <button class="sb-link" onclick="scrollTo('#demo3',this)"><span class="sb-icon">👋</span> Onboarding<span class="sb-num">03</span></button>
+      <button class="sb-link" onclick="scrollTo('#demo4',this)"><span class="sb-icon">🛠️</span> Soporte TI<span class="sb-num">04</span></button>
+    </div>
+    <div class="sb-section">
+      <div class="sb-section-label">Análisis</div>
+      <button class="sb-link" onclick="scrollTo('#comparativa',this)"><span class="sb-icon">📊</span> Comparativa</button>
+    </div>
+  </nav>
+
+  <div class="sb-footer">
+    <strong>Laboratorio de Innovación</strong><br>
+    Transformación Digital · Banco Industrial<br>
+    Actualizado: Marzo 2026
+  </div>
+</aside>
+
+<!-- ════════════════════════ MAIN ════════════════════════════ -->
+<main class="main">
+
+  <!-- topbar -->
+  <div class="topbar">
+    <div class="tb-crumb">Hub de Conocimiento · <strong id="tb-section">Portada</strong></div>
+    <div class="tb-progress">
+      <span id="tb-pct">0%</span>
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- ══ 1. PORTADA ══ -->
+  <section id="portada" data-label="Portada" class="hero-section">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">📚 Hub de Conocimiento Interno · M365</div>
+      <h1>Microsoft<br><em>Bookings</em></h1>
+      <p class="hero-sub">Todo lo que necesitas saber para agendar, gestionar y automatizar citas en Banco Industrial — sin correos de ida y vuelta, sin coordinación manual.</p>
+      <div class="hero-chips">
+        <span class="chip">📅 Agendamiento self-service</span>
+        <span class="chip">🔗 Integrado con Teams y Outlook</span>
+        <span class="chip">✅ Incluido en M365</span>
+        <span class="chip">📧 Confirmaciones automáticas</span>
+      </div>
+      <div class="hero-metrics">
+        <div class="metric-item"><div class="m-num">4</div><div class="m-label">casos de uso demostrados</div></div>
+        <div class="metric-item"><div class="m-num">~15<span style="font-size:1rem;">min</span></div><div class="m-label">para crear tu primer calendario</div></div>
+        <div class="metric-item"><div class="m-num">0</div><div class="m-label">costo adicional a tu licencia M365</div></div>
+        <div class="metric-item"><div class="m-num">87<span style="font-size:1rem;">%</span></div><div class="m-label">menos tiempo en coordinar citas</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 2. QUÉ ES ══ -->
+  <section id="que-es" data-label="¿Qué es Bookings?">
+    <div class="hub-section">
+      <div class="sec-label reveal">Fundamentos</div>
+      <h2 class="sec-title reveal">¿Qué es <em>Microsoft Bookings?</em></h2>
+      <p class="sec-body reveal">Microsoft Bookings es una aplicación incluida en Microsoft 365 que permite crear páginas de reserva personalizadas. Clientes o colaboradores pueden agendar citas de forma autónoma — la disponibilidad se sincroniza en tiempo real con los calendarios Outlook de cada persona asignada.</p>
+
+      <div class="callout info reveal">
+        <span class="callout-icon">💡</span>
+        <div><strong>¿Ya tengo M365?</strong> Entonces ya tienes Bookings. No requiere compra adicional — solo activarlo desde el Centro de Administración de Microsoft 365 o directamente en <strong>bookings.microsoft.com</strong>.</div>
+      </div>
+
+      <div class="feat-grid">
+        <div class="feat-card reveal reveal-d1">
+          <div class="fc-icon" style="background:rgba(0,120,212,.08);">🌐</div>
+          <div class="fc-title">Página de reserva pública o interna</div>
+          <div class="fc-body">URL personalizada que puedes compartir por correo, Teams, intranet o código QR. Funciona en cualquier dispositivo.</div>
+        </div>
+        <div class="feat-card reveal reveal-d2">
+          <div class="fc-icon" style="background:rgba(6,163,85,.08);">📧</div>
+          <div class="fc-title">Confirmaciones automáticas</div>
+          <div class="fc-body">Envía correos de confirmación y recordatorios (24h y 1h antes) sin que nadie tenga que escribir nada.</div>
+        </div>
+        <div class="feat-card reveal reveal-d3">
+          <div class="fc-icon" style="background:rgba(224,123,26,.08);">🗓️</div>
+          <div class="fc-title">Sync bidireccional con Outlook</div>
+          <div class="fc-body">Las citas aparecen automáticamente en el calendario del colaborador. Si ya tiene algo ocupado, Bookings no permite ese horario.</div>
+        </div>
+        <div class="feat-card reveal reveal-d4">
+          <div class="fc-icon" style="background:rgba(10,126,164,.08);">🎥</div>
+          <div class="fc-title">Links de Teams automáticos</div>
+          <div class="fc-body">Para reuniones virtuales, genera el link de videollamada de Teams sin pasos adicionales.</div>
+        </div>
+        <div class="feat-card reveal reveal-d1">
+          <div class="fc-icon" style="background:rgba(124,58,237,.08);">👥</div>
+          <div class="fc-title">Gestión de personal y servicios</div>
+          <div class="fc-body">Define múltiples servicios con diferentes duraciones y asígnalos a colaboradores específicos con horarios propios.</div>
+        </div>
+        <div class="feat-card reveal reveal-d2">
+          <div class="fc-icon" style="background:rgba(239,68,68,.08);">🔄</div>
+          <div class="fc-title">Autogestión de citas</div>
+          <div class="fc-body">El agendado recibe un link para reagendar o cancelar sin necesidad de contactar a nadie.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 3. CÓMO FUNCIONA ══ -->
+  <section id="como-funciona" data-label="¿Cómo funciona?">
+    <div class="hub-section">
+      <div class="sec-label reveal">Flujo</div>
+      <h2 class="sec-title reveal">¿Cómo funciona <em>en la práctica?</em></h2>
+      <p class="sec-body reveal">Desde que configuras el calendario hasta que el colaborador recibe su cita confirmada, el proceso es completamente automático.</p>
+
+      <div class="steps-row reveal">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <div class="step-title">Administrador configura</div>
+          <div class="step-body">Crea el calendario, define servicios, asigna personal y establece horarios de disponibilidad. Una sola vez.</div>
+        </div>
+        <div class="step-card highlighted">
+          <div class="step-num">02</div>
+          <div class="step-title">Usuario agenda</div>
+          <div class="step-body">Entra al link de Bookings, elige servicio, fecha disponible, hora y completa sus datos en menos de 2 minutos.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <div class="step-title">Confirmación automática</div>
+          <div class="step-body">Ambas partes reciben correo con detalles. La cita aparece en Outlook del responsable y en Teams si es virtual.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">04</div>
+          <div class="step-title">Recordatorios y gestión</div>
+          <div class="step-body">El sistema envía recordatorios antes de la cita. El usuario puede reagendar o cancelar con su link personal.</div>
+        </div>
+      </div>
+
+      <div class="callout tip reveal" style="margin-top:2rem;">
+        <span class="callout-icon">⚡</span>
+        <div><strong>Dato clave:</strong> La verificación de disponibilidad es en tiempo real. Bookings consulta el calendario Outlook del colaborador antes de mostrar horarios — si tiene una reunión, ese bloque no aparece disponible para agendar.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 4. CASOS ══ -->
+  <section id="casos" data-label="Casos de Uso">
+    <div class="hub-section">
+      <div class="sec-label reveal">Casos de Uso</div>
+      <h2 class="sec-title reveal">4 formas de usar Bookings <em>en el banco</em></h2>
+      <p class="sec-body reveal">Cada caso tiene su propio demo interactivo más abajo. Haz clic en cualquier tarjeta para ir directamente.</p>
+
+      <div class="cases-grid">
+        <div class="case-card c-blue reveal reveal-d1" onclick="scrollTo('#demo1')">
+          <div class="case-card-head">
+            <div class="case-num">Caso 01</div>
+            <div class="case-icon">📅</div>
+            <div class="case-title">Reuniones Internas</div>
+          </div>
+          <div class="case-card-body">
+            <div class="case-desc">Colaboradores agendan tiempo con compañeros, jefes o el equipo de Innovación sin intercambiar correos. Disponibilidad real de Outlook.</div>
+            <div class="case-tag">Uso interno</div>
+          </div>
+          <div class="case-footer"><span>Ver demo interactivo</span><span class="arrow">→</span></div>
+        </div>
+        <div class="case-card c-teal reveal reveal-d2" onclick="scrollTo('#demo2')">
+          <div class="case-card-head">
+            <div class="case-num">Caso 02</div>
+            <div class="case-icon">🏦</div>
+            <div class="case-title">Atención al Cliente</div>
+          </div>
+          <div class="case-card-body">
+            <div class="case-desc">Clientes del banco agendan citas con ejecutivos, gestores de inversión o asesores desde cualquier dispositivo, sin ir a sucursal.</div>
+            <div class="case-tag">Uso externo</div>
+          </div>
+          <div class="case-footer"><span>Ver demo interactivo</span><span class="arrow">→</span></div>
+        </div>
+        <div class="case-card c-green reveal reveal-d3" onclick="scrollTo('#demo3')">
+          <div class="case-card-head">
+            <div class="case-num">Caso 03</div>
+            <div class="case-icon">👋</div>
+            <div class="case-title">Onboarding</div>
+          </div>
+          <div class="case-card-body">
+            <div class="case-desc">Nuevos colaboradores agendan cada sesión de ingreso (inducción, TI, tour, etc.) a su ritmo, sin sobrecargar a RRHH.</div>
+            <div class="case-tag">RRHH / Ingreso</div>
+          </div>
+          <div class="case-footer"><span>Ver demo interactivo</span><span class="arrow">→</span></div>
+        </div>
+        <div class="case-card c-amber reveal reveal-d4" onclick="scrollTo('#demo4')">
+          <div class="case-card-head">
+            <div class="case-num">Caso 04</div>
+            <div class="case-icon">🛠️</div>
+            <div class="case-title">Soporte TI</div>
+          </div>
+          <div class="case-card-body">
+            <div class="case-desc">Mesa de servicio con turnos agendados. El técnico llega preparado con contexto del problema, sin llamadas improvisadas.</div>
+            <div class="case-tag">Área de TI</div>
+          </div>
+          <div class="case-footer"><span>Ver demo interactivo</span><span class="arrow">→</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 5. DEMO 1 — INTERNO ══ -->
+  <section id="demo1" data-label="Demo 01 · Reuniones Internas">
+    <div class="hub-section">
+      <div class="sec-label reveal">Demo interactivo · Caso 01</div>
+      <h2 class="sec-title reveal">📅 Reuniones <em>Internas</em></h2>
+      <p class="sec-body reveal">Simula el flujo completo: selecciona el tipo de reunión, elige fecha y hora, y completa tus datos. Igual a como lo verán tus compañeros en producción.</p>
+
+      <div class="callout info reveal">
+        <span class="callout-icon">🎯</span>
+        <div><strong>Escenario:</strong> Un colaborador quiere agendar una consulta con el Laboratorio de Innovación. Entra al link de Bookings de TxD, elige horario disponible y recibe confirmación automática con link de Teams.</div>
+      </div>
+
+      <!-- WIZARD -->
+      <div class="demo-wrap reveal">
+        <div class="demo-topbar">
+          <div class="demo-dots"><span></span><span></span><span></span></div>
+          <div class="demo-url">outlook.office.com/owa/calendar/TxD-Innovacion@bi.com.gt/bookings/</div>
+        </div>
+        <div class="bk-sim">
+          <div class="bk-header blue">
+            <div><div class="bk-org-name">Laboratorio de Innovación · TxD</div><div class="bk-org-sub">Banco Industrial Guatemala</div></div>
+            <div style="font-size:.7rem;opacity:.75;">📍 Ciudad de Guatemala</div>
+          </div>
+
+          <div id="d1-s1">
+            <div class="bk-body">
+              <div class="wiz" style="margin-bottom:1rem;">
+                <div class="wiz-s active">① Servicio</div>
+                <div class="wiz-s">② Fecha y hora</div>
+                <div class="wiz-s">③ Mis datos</div>
+              </div>
+              <div style="font-size:.72rem;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.7rem;">Tipo de reunión</div>
+              <div class="svc-grid">
+                <div class="svc-c" onclick="d1SelSvc(this)"><div class="si">💡</div><div class="sn">Consulta de Innovación</div><div class="sm">⏱ 30 min · Teams</div></div>
+                <div class="svc-c" onclick="d1SelSvc(this)"><div class="si">📋</div><div class="sn">Revisión de Proyecto</div><div class="sm">⏱ 45 min · Teams</div></div>
+                <div class="svc-c" onclick="d1SelSvc(this)"><div class="si">⚡</div><div class="sn">Demo Power Platform</div><div class="sm">⏱ 60 min · Teams</div></div>
+              </div>
+              <div style="margin-top:.8rem;padding:.75rem;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;">
+                <div style="font-size:.72rem;font-weight:700;color:#374151;margin-bottom:.5rem;">Equipo disponible</div>
+                <div style="display:flex;flex-direction:column;gap:.4rem;">
+                  <div style="display:flex;align-items:center;gap:.65rem;">
+                    <div class="staff-av" style="background:#0078d4;width:30px;height:30px;font-size:.65rem;">WM</div>
+                    <div><div class="staff-name" style="font-size:.75rem;">Walda Melendrez</div><div class="staff-role">Innovation Leader</div></div>
+                    <div class="staff-dot dot-on" style="margin-left:auto;"></div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:.65rem;">
+                    <div class="staff-av" style="background:#7c3aed;width:30px;height:30px;font-size:.65rem;">CL</div>
+                    <div><div class="staff-name" style="font-size:.75rem;">Carlos de León</div><div class="staff-role">Gerente de Unidad</div></div>
+                    <div class="staff-dot dot-busy" style="margin-left:auto;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="padding:.6rem 1.5rem 1.1rem;"><button class="bk-cta" id="d1-n1" disabled onclick="d1Step2()">Elegir fecha y hora →</button></div>
+          </div>
+
+          <div id="d1-s2" style="display:none;">
+            <div class="bk-body">
+              <div class="wiz" style="margin-bottom:1rem;">
+                <div class="wiz-s done">① Servicio ✓</div>
+                <div class="wiz-s active">② Fecha y hora</div>
+                <div class="wiz-s">③ Mis datos</div>
+              </div>
+              <div style="display:grid;grid-template-columns:auto 1fr;gap:1rem;align-items:start;">
+                <div class="cal-mini">
+                  <div class="cal-mini-head"><button class="cal-mini-nav">‹</button><span>Abril 2026</span><button class="cal-mini-nav">›</button></div>
+                  <div class="cal-g">
+                    <div class="cal-dl">D</div><div class="cal-dl">L</div><div class="cal-dl">M</div><div class="cal-dl">X</div><div class="cal-dl">J</div><div class="cal-dl">V</div><div class="cal-dl">S</div>
+                    <div class="cal-d emp"></div><div class="cal-d emp"></div><div class="cal-d av" onclick="d1Day(this)">1</div><div class="cal-d av" onclick="d1Day(this)">2</div><div class="cal-d av" onclick="d1Day(this)">3</div><div class="cal-d av" onclick="d1Day(this)">4</div><div class="cal-d dis">5</div>
+                    <div class="cal-d dis">6</div><div class="cal-d av" onclick="d1Day(this)">7</div><div class="cal-d av" onclick="d1Day(this)">8</div><div class="cal-d av" onclick="d1Day(this)">9</div><div class="cal-d av" onclick="d1Day(this)">10</div><div class="cal-d av" onclick="d1Day(this)">11</div><div class="cal-d dis">12</div>
+                    <div class="cal-d dis">13</div><div class="cal-d av" onclick="d1Day(this)">14</div><div class="cal-d av" onclick="d1Day(this)">15</div><div class="cal-d av" onclick="d1Day(this)">16</div><div class="cal-d av" onclick="d1Day(this)">17</div><div class="cal-d av" onclick="d1Day(this)">18</div><div class="cal-d dis">19</div>
+                    <div class="cal-d dis">20</div><div class="cal-d av" onclick="d1Day(this)">21</div><div class="cal-d av" onclick="d1Day(this)">22</div><div class="cal-d av" onclick="d1Day(this)">23</div><div class="cal-d av" onclick="d1Day(this)">24</div><div class="cal-d av" onclick="d1Day(this)">25</div><div class="cal-d dis">26</div>
+                  </div>
+                </div>
+                <div>
+                  <div id="d1-slot-prompt" style="font-size:.78rem;color:#9ca3af;padding:.5rem 0;">← Selecciona una fecha</div>
+                  <div id="d1-slots" style="display:none;">
+                    <div style="font-size:.68rem;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;">Horarios disponibles</div>
+                    <div class="slots-row">
+                      <div class="slot" onclick="d1Slot(this)">08:00</div><div class="slot" onclick="d1Slot(this)">08:30</div>
+                      <div class="slot taken">09:00</div><div class="slot taken">09:30</div>
+                      <div class="slot" onclick="d1Slot(this)">10:00</div><div class="slot" onclick="d1Slot(this)">10:30</div>
+                      <div class="slot taken">11:00</div><div class="slot" onclick="d1Slot(this)">11:30</div>
+                      <div class="slot" onclick="d1Slot(this)">13:00</div><div class="slot" onclick="d1Slot(this)">14:00</div>
+                      <div class="slot taken">14:30</div><div class="slot" onclick="d1Slot(this)">15:00</div>
+                      <div class="slot" onclick="d1Slot(this)">15:30</div><div class="slot taken">16:00</div>
+                    </div>
+                    <div style="margin-top:.6rem;font-size:.68rem;color:#9ca3af;">🔒 Gris = Outlook ocupado · Azul = disponible</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="padding:.6rem 1.5rem 1.1rem;"><button class="bk-cta" id="d1-n2" disabled onclick="d1Step3()">Completar mis datos →</button></div>
+          </div>
+
+          <div id="d1-s3" style="display:none;">
+            <div class="bk-form">
+              <div class="wiz" style="margin-bottom:1rem;">
+                <div class="wiz-s done">① Servicio ✓</div>
+                <div class="wiz-s done">② Fecha ✓</div>
+                <div class="wiz-s active">③ Mis datos</div>
+              </div>
+              <div class="f-row"><div class="f-group"><label class="f-label">Nombre</label><input class="f-input" placeholder="Tu nombre"></div><div class="f-group"><label class="f-label">Apellido</label><input class="f-input" placeholder="Apellido"></div></div>
+              <div class="f-row"><div class="f-group"><label class="f-label">Correo corporativo</label><input class="f-input" type="email" placeholder="usuario@bi.com.gt"></div><div class="f-group"><label class="f-label">Área</label><input class="f-input" placeholder="Ej. Banca Digital"></div></div>
+              <div class="f-group" style="margin-bottom:.8rem;"><label class="f-label">Objetivo de la reunión</label><textarea class="f-input" rows="2" placeholder="Describe brevemente..."></textarea></div>
+              <div style="background:var(--ms-light);border-radius:7px;padding:.7rem;font-size:.73rem;color:#1e3a5f;margin-bottom:.9rem;">🔗 Se generará link de Teams automáticamente · 📧 Confirmación a tu correo @bi.com.gt</div>
+              <button class="bk-cta" onclick="showOv('d1')">✅ Confirmar reserva</button>
+            </div>
+          </div>
+        </div>
+      </div><!-- /demo-wrap -->
+    </div>
+  </section>
+
+  <!-- ══ 6. DEMO 2 — CLIENTE ══ -->
+  <section id="demo2" data-label="Demo 02 · Atención al Cliente">
+    <div class="hub-section">
+      <div class="sec-label reveal">Demo interactivo · Caso 02</div>
+      <h2 class="sec-title reveal">🏦 Atención al <em>Cliente</em></h2>
+      <p class="sec-body reveal">Página pública de Bookings. Un cliente selecciona especialista, tipo de servicio bancario y horario disponible — todo sin necesidad de llamar o ir a sucursal.</p>
+
+      <div class="callout success reveal">
+        <span class="callout-icon">💼</span>
+        <div><strong>Escenario:</strong> Un cliente premium quiere agendar una asesoría de inversiones con una gestora. Entra al link desde la web del banco, elige su especialista preferida y bloquea su cita.</div>
+      </div>
+
+      <div class="demo-wrap reveal">
+        <div class="demo-topbar">
+          <div class="demo-dots"><span></span><span></span><span></span></div>
+          <div class="demo-url">bookings.microsoft.com/s/BancoIndustrial-Clientes</div>
+        </div>
+        <div class="bk-sim">
+          <div class="bk-header" style="background:linear-gradient(135deg,#1a3a6c,#0f5496);">
+            <div><div class="bk-org-name">🏦 Banco Industrial — Atención al Cliente</div><div class="bk-org-sub">Agenda tu cita con nuestros especialistas</div></div>
+          </div>
+          <div class="bk-body" style="display:grid;grid-template-columns:220px 1fr;gap:1rem;">
+            <div>
+              <div style="border:1px solid #e5e7eb;border-radius:9px;overflow:hidden;">
+                <div style="background:#f9fafb;padding:.5rem .8rem;font-size:.65rem;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #e5e7eb;">Especialistas</div>
+                <div class="staff-list">
+                  <div class="staff-item" onclick="d2Staff(this)"><div class="staff-av" style="background:#0078d4;">EA</div><div><div class="staff-name">E. Alvarado</div><div class="staff-role">Ejecutivo Premium</div></div><div class="staff-dot dot-on"></div></div>
+                  <div class="staff-item" onclick="d2Staff(this)"><div class="staff-av" style="background:#7c3aed;">MR</div><div><div class="staff-name">M. Rodríguez</div><div class="staff-role">Gestora Inversiones</div></div><div class="staff-dot dot-on"></div></div>
+                  <div class="staff-item" onclick="d2Staff(this)"><div class="staff-av" style="background:#065f46;">JP</div><div><div class="staff-name">J. Pérez</div><div class="staff-role">Asesor Créditos</div></div><div class="staff-dot dot-busy"></div></div>
+                  <div class="staff-item" onclick="d2Staff(this)"><div class="staff-av" style="background:#b45309;">LC</div><div><div class="staff-name">L. Castro</div><div class="staff-role">Banca Digital</div></div><div class="staff-dot dot-on"></div></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:.68rem;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem;">Tipo de servicio</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.8rem;">
+                <div class="svc-c" onclick="d2Svc(this)"><div class="si">📈</div><div class="sn">Asesoría Inversiones</div><div class="sm">⏱ 45 min</div></div>
+                <div class="svc-c" onclick="d2Svc(this)"><div class="si">💳</div><div class="sn">Apertura de Cuenta</div><div class="sm">⏱ 30 min</div></div>
+                <div class="svc-c" onclick="d2Svc(this)"><div class="si">🏢</div><div class="sn">Crédito Empresarial</div><div class="sm">⏱ 60 min</div></div>
+                <div class="svc-c" onclick="d2Svc(this)"><div class="si">💻</div><div class="sn">Soporte Banca en Línea</div><div class="sm">⏱ 20 min</div></div>
+              </div>
+              <div id="d2-cal-show" style="display:none;">
+                <div style="font-size:.68rem;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;">Disponibilidad esta semana</div>
+                <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:.35rem;margin-bottom:.8rem;">
+                  <div style="text-align:center;"><div style="font-size:.6rem;color:#9ca3af;margin-bottom:.25rem;">LUN</div><div class="slot" style="margin-bottom:.25rem;" onclick="d2Slot(this)">09:00</div><div class="slot taken" style="margin-bottom:.25rem;">11:00</div><div class="slot" onclick="d2Slot(this)">14:00</div></div>
+                  <div style="text-align:center;"><div style="font-size:.6rem;color:#9ca3af;margin-bottom:.25rem;">MAR</div><div class="slot taken" style="margin-bottom:.25rem;">09:00</div><div class="slot" style="margin-bottom:.25rem;" onclick="d2Slot(this)">11:00</div><div class="slot" onclick="d2Slot(this)">15:00</div></div>
+                  <div style="text-align:center;"><div style="font-size:.6rem;color:#9ca3af;margin-bottom:.25rem;">MIÉ</div><div class="slot" style="margin-bottom:.25rem;" onclick="d2Slot(this)">08:30</div><div class="slot" style="margin-bottom:.25rem;" onclick="d2Slot(this)">10:30</div><div class="slot taken" onclick="">14:30</div></div>
+                  <div style="text-align:center;"><div style="font-size:.6rem;color:#9ca3af;margin-bottom:.25rem;">JUE</div><div class="slot taken" style="margin-bottom:.25rem;">09:00</div><div class="slot taken" style="margin-bottom:.25rem;">11:00</div><div class="slot" onclick="d2Slot(this)">16:00</div></div>
+                  <div style="text-align:center;"><div style="font-size:.6rem;color:#9ca3af;margin-bottom:.25rem;">VIE</div><div class="slot" style="margin-bottom:.25rem;" onclick="d2Slot(this)">09:00</div><div class="slot" style="margin-bottom:.25rem;" onclick="d2Slot(this)">11:30</div><div class="slot" onclick="d2Slot(this)">13:00</div></div>
+                </div>
+                <button class="bk-cta" id="d2-cta" disabled onclick="showOv('d2')">Reservar cita</button>
+              </div>
+              <div id="d2-prompt" style="font-size:.78rem;color:#9ca3af;">← Selecciona especialista y servicio para ver horarios</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 7. DEMO 3 — ONBOARDING ══ -->
+  <section id="demo3" data-label="Demo 03 · Onboarding">
+    <div class="hub-section">
+      <div class="sec-label reveal">Demo interactivo · Caso 03</div>
+      <h2 class="sec-title reveal">👋 Onboarding de <em>Nuevos Colaboradores</em></h2>
+      <p class="sec-body reveal">El nuevo colaborador ve su plan de incorporación y agenda cada sesión a su ritmo. RRHH ya no coordina correos — solo administra el calendario de Bookings.</p>
+
+      <div class="callout tip reveal">
+        <span class="callout-icon">🧩</span>
+        <div><strong>Cómo funciona:</strong> RRHH crea un calendario de Bookings con todas las sesiones de ingreso. Al nuevo colaborador se le comparte el link antes de su primer día. Él agenda según su disponibilidad — sin presionar a nadie.</div>
+      </div>
+
+      <div class="demo-wrap reveal">
+        <div class="demo-topbar">
+          <div class="demo-dots"><span></span><span></span><span></span></div>
+          <div class="demo-url">outlook.office.com/owa/calendar/RRHH-Onboarding@bi.com.gt/bookings/</div>
+        </div>
+        <div class="bk-sim">
+          <div class="bk-header green">
+            <div><div class="bk-org-name">👋 Bienvenido a Banco Industrial</div><div class="bk-org-sub">Agenda cada sesión de tu proceso de ingreso</div></div>
+          </div>
+          <div style="padding:1.1rem 1.5rem;">
+            <div style="font-size:.7rem;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.8rem;">Tu plan de incorporación — Semana 1</div>
+            <div class="timeline">
+              <div class="tl-item booked">
+                <div class="tl-title-row"><div class="tl-title">Sesión de Bienvenida — RRHH</div><div class="tl-badge booked">✅ Agendado</div></div>
+                <div class="tl-meta"><span>📅 Lun 24/03 · 09:00</span><span>⏱ 60 min</span><span>🎥 Teams</span></div>
+              </div>
+              <div class="tl-item" onclick="d3Click(this,'Configuración de Cuenta TI')">
+                <div class="tl-title-row"><div class="tl-title">Configuración de Cuenta TI</div><div class="tl-badge pending">⏳ Pendiente</div></div>
+                <div class="tl-meta"><span>📅 Disponible esta semana</span><span>⏱ 45 min</span><span>📍 Torre BI</span></div>
+              </div>
+              <div class="tl-item" onclick="d3Click(this,'Tour de Instalaciones')">
+                <div class="tl-title-row"><div class="tl-title">Tour de Instalaciones</div><div class="tl-badge pending">⏳ Pendiente</div></div>
+                <div class="tl-meta"><span>📅 Disponible esta semana</span><span>⏱ 30 min</span><span>📍 Presencial</span></div>
+              </div>
+              <div class="tl-item" onclick="d3Click(this,'Inducción Cultura Corporativa')">
+                <div class="tl-title-row"><div class="tl-title">Inducción — Cultura Corporativa</div><div class="tl-badge pending">⏳ Pendiente</div></div>
+                <div class="tl-meta"><span>📅 Disponible esta semana</span><span>⏱ 90 min</span><span>🎥 Teams</span></div>
+              </div>
+              <div class="tl-item" onclick="d3Click(this,'Presentación con tu Equipo')">
+                <div class="tl-title-row"><div class="tl-title">Presentación con tu Equipo</div><div class="tl-badge pending">⏳ Pendiente</div></div>
+                <div class="tl-meta"><span>📅 Disponible esta semana</span><span>⏱ 30 min</span><span>🎥 Teams</span></div>
+              </div>
+            </div>
+            <div id="d3-notice" style="margin-top:1rem;padding:.75rem;background:#f0fdf4;border-radius:8px;border-left:3px solid #10b981;font-size:.74rem;color:#065f46;">
+              ✅ <strong>1 de 5 sesiones agendadas.</strong> Haz clic en una sesión pendiente para elegir tu horario.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 8. DEMO 4 — SOPORTE TI ══ -->
+  <section id="demo4" data-label="Demo 04 · Soporte TI">
+    <div class="hub-section">
+      <div class="sec-label reveal">Demo interactivo · Caso 04</div>
+      <h2 class="sec-title reveal">🛠️ Mesa de Servicio <em>TI Agendada</em></h2>
+      <p class="sec-body reveal">En vez de llamar al helpdesk sin aviso, el colaborador agenda un turno con contexto del problema. El técnico llega preparado, la atención es más rápida y el historial queda en Bookings.</p>
+
+      <div class="callout tip reveal">
+        <span class="callout-icon">⚙️</span>
+        <div><strong>Ventaja clave:</strong> Al registrar categoría y prioridad antes de la cita, el técnico asignado puede preparar herramientas o soluciones de antemano — reduciendo tiempo de resolución hasta un 40%.</div>
+      </div>
+
+      <div class="demo-wrap reveal">
+        <div class="demo-topbar">
+          <div class="demo-dots"><span></span><span></span><span></span></div>
+          <div class="demo-url">outlook.office.com/owa/calendar/SoporteTI@bi.com.gt/bookings/</div>
+        </div>
+        <div class="bk-sim">
+          <div class="bk-header navy">
+            <div><div class="bk-org-name">🛠️ Mesa de Servicio TI · Banco Industrial</div><div class="bk-org-sub">Agenda tu asistencia técnica · Tiempo de respuesta garantizado</div></div>
+          </div>
+          <div class="bk-form">
+            <div style="font-size:.68rem;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem;">Categoría del problema</div>
+            <div class="cat-grid">
+              <div class="cat-c" onclick="d4Cat(this)"><div class="cat-icon">💻</div><div class="cat-name">Hardware</div></div>
+              <div class="cat-c" onclick="d4Cat(this)"><div class="cat-icon">🌐</div><div class="cat-name">Conectividad</div></div>
+              <div class="cat-c" onclick="d4Cat(this)"><div class="cat-icon">🔐</div><div class="cat-name">Accesos / AD</div></div>
+              <div class="cat-c" onclick="d4Cat(this)"><div class="cat-icon">📧</div><div class="cat-name">Correo / Teams</div></div>
+              <div class="cat-c" onclick="d4Cat(this)"><div class="cat-icon">⚡</div><div class="cat-name">Power Platform</div></div>
+              <div class="cat-c" onclick="d4Cat(this)"><div class="cat-icon">🖨️</div><div class="cat-name">Impresión</div></div>
+            </div>
+            <div style="font-size:.68rem;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem;">Prioridad</div>
+            <div class="pri-row">
+              <button class="pri-b p-lo" onclick="d4Pri(this,'lo')">🟢 Baja</button>
+              <button class="pri-b p-me" onclick="d4Pri(this,'me')">🟡 Media</button>
+              <button class="pri-b p-hi" onclick="d4Pri(this,'hi')">🔴 Alta</button>
+            </div>
+            <div class="f-group" style="margin-bottom:.8rem;"><label class="f-label">Descripción del problema</label><textarea class="f-input" rows="2" placeholder="Describe brevemente el problema..."></textarea></div>
+            <div id="d4-slots" style="display:none;margin-bottom:.8rem;">
+              <div style="font-size:.68rem;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;">Próximos turnos disponibles</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:.8rem;">
+                <div style="background:#f0f7ff;border:1.5px solid #bfdbfe;border-radius:7px;padding:.55rem;font-size:.72rem;cursor:pointer;transition:.14s;" onclick="d4SelTurn(this)"><div style="font-weight:700;color:#1e40af;">Hoy · 14:30</div><div style="color:#6b7280;">Técnico: Carlos M.</div></div>
+                <div style="background:#f0f7ff;border:1.5px solid #bfdbfe;border-radius:7px;padding:.55rem;font-size:.72rem;cursor:pointer;transition:.14s;" onclick="d4SelTurn(this)"><div style="font-weight:700;color:#1e40af;">Hoy · 16:00</div><div style="color:#6b7280;">Técnico: Ana R.</div></div>
+                <div style="background:#f0f7ff;border:1.5px solid #bfdbfe;border-radius:7px;padding:.55rem;font-size:.72rem;cursor:pointer;transition:.14s;" onclick="d4SelTurn(this)"><div style="font-weight:700;color:#1e40af;">Mañana · 09:00</div><div style="color:#6b7280;">Técnico: Luis F.</div></div>
+                <div style="background:#f0f7ff;border:1.5px solid #bfdbfe;border-radius:7px;padding:.55rem;font-size:.72rem;cursor:pointer;transition:.14s;" onclick="d4SelTurn(this)"><div style="font-weight:700;color:#1e40af;">Mañana · 11:00</div><div style="color:#6b7280;">Técnico: Carlos M.</div></div>
+              </div>
+              <button class="bk-cta" id="d4-cta" disabled onclick="showOv('d4')">Confirmar ticket y cita</button>
+            </div>
+            <div id="d4-btn"><button class="bk-cta" onclick="d4ShowSlots()">Ver turnos disponibles →</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 9. COMPARATIVA ══ -->
+  <section id="comparativa" data-label="Comparativa">
+    <div class="hub-section">
+      <div class="sec-label reveal">Análisis de valor</div>
+      <h2 class="sec-title reveal">Antes y después <em>de Bookings</em></h2>
+      <p class="sec-body reveal">Una mirada directa al tiempo y esfuerzo que se elimina al reemplazar la coordinación manual por Bookings.</p>
+
+      <div class="reveal" style="border:1.5px solid var(--border);border-radius:12px;overflow:hidden;">
+        <div style="overflow-x:auto;">
+          <table class="comp-table">
+            <thead><tr><th>Aspecto</th><th>Proceso actual (sin Bookings)</th><th>Con Microsoft Bookings</th></tr></thead>
+            <tbody>
+              <tr><td>Tiempo para agendar</td><td>15–30 min (correos)</td><td class="ck">⚡ ~2 min (self-service)</td></tr>
+              <tr><td>Confirmaciones</td><td>Manual — puede olvidarse</td><td class="ck">✅ Automáticas al instante</td></tr>
+              <tr><td>Recordatorios</td><td class="cx">❌ No existen</td><td class="ck">✅ 24h y 1h antes, automáticos</td></tr>
+              <tr><td>Verificar disponibilidad</td><td>Preguntar por correo/Teams</td><td class="ck">✅ Tiempo real con Outlook</td></tr>
+              <tr><td>Link de Teams</td><td>Crear manualmente</td><td class="ck">✅ Auto-generado</td></tr>
+              <tr><td>Reagendar o cancelar</td><td>Nuevo hilo de correo</td><td class="ck">✅ Link de autogestión</td></tr>
+              <tr><td>Historial de citas</td><td class="cx">❌ No existe</td><td class="ck">✅ Dashboard en Bookings</td></tr>
+              <tr><td>Disponible 24/7</td><td class="cx">❌ Solo en horario laboral</td><td class="ck">✅ Cualquier hora, cualquier día</td></tr>
+              <tr><td>Costo adicional</td><td>—</td><td class="ck">✅ Incluido en M365</td></tr>
+              <tr><td>Tiempo de configuración inicial</td><td>—</td><td class="cy">⚙ ~15 min (una sola vez)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="metrics-row">
+        <div class="metric-card reveal"><div class="mc-num" style="color:var(--green);">87%</div><div class="mc-label">reducción en tiempo de coordinación de citas</div></div>
+        <div class="metric-card reveal reveal-d1"><div class="mc-num" style="color:var(--ms);">0</div><div class="mc-label">costo adicional — incluido en licencia M365</div></div>
+        <div class="metric-card reveal reveal-d2"><div class="mc-num" style="color:var(--amber);">~15min</div><div class="mc-label">para configurar tu primer calendario</div></div>
+        <div class="metric-card reveal reveal-d3"><div class="mc-num" style="color:var(--teal);">24/7</div><div class="mc-label">disponibilidad para agendar citas</div></div>
+      </div>
+
+      <div class="callout success reveal" style="margin-top:2rem;">
+        <span class="callout-icon">🚀</span>
+        <div><strong>¿Listo para implementarlo?</strong> Contacta al equipo de Transformación Digital (TxD) en el Laboratorio de Innovación. Podemos ayudarte a configurar tu primer calendario de Bookings en menos de 30 minutos.</div>
+      </div>
+    </div>
+  </section>
+
+</main><!-- /main -->
+
+<!-- ══ OVERLAYS ══ -->
+<!-- Generic confirm -->
+<div class="overlay" id="ov-main" onclick="closeOv('ov-main',event)">
+  <div class="overlay-card">
+    <div class="ov-icon" id="ov-icon">🎉</div>
+    <div class="ov-title" id="ov-title">¡Cita confirmada!</div>
+    <div class="ov-body">Tu reserva fue registrada. Recibirás confirmación en tu correo con todos los detalles.</div>
+    <div class="ov-detail" id="ov-detail"></div>
+    <button class="ov-btn" onclick="document.getElementById('ov-main').classList.remove('show')">Entendido ✓</button>
+  </div>
+</div>
+
+<!-- Onboarding slot picker -->
+<div class="overlay" id="ov-d3" onclick="closeOv('ov-d3',event)">
+  <div class="overlay-card">
+    <div class="ov-icon">📅</div>
+    <div class="ov-title" id="ov-d3-title">Agendar sesión</div>
+    <div class="ov-body" style="margin-bottom:.9rem;">Selecciona tu horario preferido:</div>
+    <div class="slot-pick">
+      <div class="sp-slot" onclick="d3Book(this)">Lun · 08:00</div>
+      <div class="sp-slot" onclick="d3Book(this)">Lun · 10:00</div>
+      <div class="sp-slot" onclick="d3Book(this)">Mar · 09:00</div>
+      <div class="sp-slot" onclick="d3Book(this)">Mar · 14:00</div>
+      <div class="sp-slot" onclick="d3Book(this)">Mié · 11:00</div>
+      <div class="sp-slot" onclick="d3Book(this)">Jue · 09:00</div>
+    </div>
+    <button class="ov-btn" style="background:#9ca3af;" onclick="document.getElementById('ov-d3').classList.remove('show')">Cancelar</button>
+  </div>
+</div>
+
+<!-- ══ JS ══ -->
+<script>
+// ── NAV ──
+const sections=document.querySelectorAll('section[id]');
+const sbLinks=document.querySelectorAll('.sb-link[onclick]');
+function scrollTo(id,btn){
+  document.querySelector(id)?.scrollIntoView({behavior:'smooth',block:'start'});
+  if(btn){sbLinks.forEach(l=>l.classList.remove('active'));btn.classList.add('active');}
+}
+
+// scroll spy
+const topbarSection=document.getElementById('tb-section');
+const progFill=document.getElementById('prog-fill');
+const tbPct=document.getElementById('tb-pct');
+window.addEventListener('scroll',()=>{
+  const pct=Math.round((window.scrollY/(document.body.scrollHeight-window.innerHeight))*100);
+  progFill.style.width=pct+'%';
+  tbPct.textContent=pct+'%';
+  sections.forEach(sec=>{
+    const rect=sec.getBoundingClientRect();
+    if(rect.top<=120&&rect.bottom>120){
+      const label=sec.dataset.label||'';
+      topbarSection.textContent=label;
+      const id='#'+sec.id;
+      sbLinks.forEach(l=>{
+        l.classList.toggle('active',l.getAttribute('onclick')?.includes(id));
+      });
+    }
+  });
+});
+
+// scroll reveal
+const ro=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis');});
+},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+// ── DEMO 1 ──
+function d1SelSvc(el){
+  el.closest('.svc-grid').querySelectorAll('.svc-c').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('d1-n1').disabled=false;
+}
+function d1Step2(){
+  document.getElementById('d1-s1').style.display='none';
+  document.getElementById('d1-s2').style.display='block';
+}
+function d1Step3(){
+  document.getElementById('d1-s2').style.display='none';
+  document.getElementById('d1-s3').style.display='block';
+}
+function d1Day(el){
+  el.closest('.cal-g').querySelectorAll('.cal-d').forEach(d=>d.classList.remove('sel-d'));
+  el.classList.add('sel-d');
+  document.getElementById('d1-slots').style.display='block';
+  document.getElementById('d1-slot-prompt').style.display='none';
+}
+function d1Slot(el){
+  el.closest('.slots-row').querySelectorAll('.slot').forEach(s=>s.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('d1-n2').disabled=false;
+}
+
+// ── DEMO 2 ──
+let d2HasStaff=false;
+function d2Staff(el){
+  el.closest('.staff-list').querySelectorAll('.staff-item').forEach(i=>i.classList.remove('sel'));
+  el.classList.add('sel');d2HasStaff=true;d2CheckReady();
+}
+function d2Svc(el){
+  el.closest('div').querySelectorAll('.svc-c').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');d2CheckReady();
+}
+function d2CheckReady(){
+  const hasSvc=document.querySelector('#demo2 .svc-c.sel');
+  if(d2HasStaff&&hasSvc){
+    document.getElementById('d2-cal-show').style.display='block';
+    document.getElementById('d2-prompt').style.display='none';
+  }
+}
+function d2Slot(el){
+  document.querySelectorAll('#demo2 .slot').forEach(s=>s.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('d2-cta').disabled=false;
+}
+
+// ── DEMO 3 ──
+let d3Current=null;
+function d3Click(el,title){
+  if(el.classList.contains('booked'))return;
+  d3Current=el;
+  document.getElementById('ov-d3-title').textContent=title;
+  document.getElementById('ov-d3').classList.add('show');
+}
+function d3Book(slotEl){
+  document.getElementById('ov-d3').classList.remove('show');
+  if(!d3Current)return;
+  d3Current.classList.add('booked');
+  d3Current.querySelector('.tl-badge').className='tl-badge booked';
+  d3Current.querySelector('.tl-badge').textContent='✅ Agendado';
+  d3Current.querySelector('.tl-meta span').textContent='📅 '+slotEl.textContent;
+  const booked=document.querySelectorAll('#demo3 .tl-item.booked').length;
+  const total=document.querySelectorAll('#demo3 .tl-item').length;
+  const notice=document.getElementById('d3-notice');
+  notice.innerHTML=booked<total
+    ?`✅ <strong>${booked} de ${total} sesiones agendadas.</strong> Haz clic en una sesión pendiente para elegir tu horario.`
+    :`🎊 <strong>¡Proceso completo!</strong> Todas las sesiones de onboarding están agendadas. ¡Bienvenido al equipo!`;
+}
+
+// ── DEMO 4 ──
+function d4Cat(el){document.querySelectorAll('.cat-c').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');}
+function d4Pri(el,lv){document.querySelectorAll('.pri-b').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');}
+function d4ShowSlots(){document.getElementById('d4-slots').style.display='block';document.getElementById('d4-btn').style.display='none';}
+function d4SelTurn(el){
+  document.querySelectorAll('#demo4 [onclick="d4SelTurn(this)"]').forEach(t=>{t.style.background='#f0f7ff';t.style.borderColor='#bfdbfe';});
+  el.style.background='#dbeafe';el.style.borderColor='#2563eb';
+  document.getElementById('d4-cta').disabled=false;
+}
+
+// ── OVERLAYS ──
+const ovConfigs={
+  d1:{icon:'📅',title:'¡Reunión interna agendada!',detail:'📋 Tipo de reunión seleccionado\n📅 Fecha y hora confirmados\n🔗 Link de Teams generado automáticamente\n📧 Confirmación enviada a tu correo @bi.com.gt\n🔔 Recordatorio programado 1h antes'},
+  d2:{icon:'🏦',title:'¡Cita con especialista confirmada!',detail:'👤 Especialista asignado\n📈 Servicio bancario seleccionado\n📅 Horario bloqueado en el calendario\n📧 Confirmación enviada al cliente\n🔔 Recordatorio 24h y 1h antes'},
+  d4:{icon:'🛠️',title:'¡Ticket y cita creados!',detail:'🔧 Categoría y prioridad registradas\n👨‍💻 Técnico asignado según disponibilidad\n📅 Turno de atención confirmado\n📧 Número de ticket enviado al correo\n📋 El técnico recibirá contexto antes de la cita'},
+};
+function showOv(key){
+  const cfg=ovConfigs[key];
+  document.getElementById('ov-icon').textContent=cfg.icon;
+  document.getElementById('ov-title').textContent=cfg.title;
+  document.getElementById('ov-detail').style.whiteSpace='pre-line';
+  document.getElementById('ov-detail').textContent=cfg.detail;
+  document.getElementById('ov-main').classList.add('show');
+}
+function closeOv(id,e){
+  if(!e||e.target===document.getElementById(id)) document.getElementById(id).classList.remove('show');
+}
+</script>
+</body>
+</html>
